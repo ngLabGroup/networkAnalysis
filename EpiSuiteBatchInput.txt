@@ -1,0 +1,12 @@
+C1=CC2=C(C=C1)C1=CC=CC=C1C=C2
+Oc1c(O)c2ccccc2c2ccccc12
+Oc1ccc2ccc3ccccc3c2c1O
+Oc1ccc2c(ccc3ccccc23)c1O
+[O-]C(=O)c1ccccc1-c1ccccc1C([O-])=O
+Oc1cccc(c1O)-c1ccccc1C([O-])=O
+OC(=O)C1=CC=CC=C1C1=C(O)C(O)=CC=C1C(O)=O
+Oc1c(ccc2ccccc12)C([O-])=O
+CC(=O)C(O)=O
+[O-]C(=O)C(=O)\C=C\c1ccccc1C([O-])=O
+OC(=O)c1c(O)ccc2ccccc12
+Oc1ccc2ccccc2c1O
