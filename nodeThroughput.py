@@ -128,11 +128,12 @@ def assignFlowWeights(G, node):
 os.chdir(r'C:\ResearchWorkingDirectory\gitRepositories\networksPlotting')
 
 #Read in the raw edgelist
-df = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\RawExampleData.xlsx", sheet_name = 'Sheet1')    
+df = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\RawExampleData.xlsx", sheet_name = 'Sheet1')
+
 
 #also need the file that matches the rules with the proper weighting
 #select whichever weighting scheme you desire
-rulesRef = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\networkAnalysis\RuleData.xls", sheet_name = '110100')
+rulesRef = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\networkAnalysis\RuleData.xls", sheet_name = 'Sheet1')
        
 rulesRefDict = rulesRef.set_index('Rule').T.to_dict('list')        
         
@@ -140,10 +141,14 @@ rulesRefDict = rulesRef.set_index('Rule').T.to_dict('list')
 #*******************************************
 for i, row in df.iterrows():
     tempRow = rulesRefDict[row['Rule']]
-    df.at[i, 'Weight' ] = (float(tempRow[0])*10)/10
+#    df.at[i, 'Weight' ] = (float(tempRow[0])*10)/10
+    
+    weightFactor = 32
+    df.at[i, 'Weight' ] = ((float(tempRow[0]) - 1)*weightFactor +1)
+
 #********************************************
-#currently the weighting reference is set up as costs, so need to invert to make it strengths
-df['Weight'] = 1/df['Weight']
+#if the weight is set up as costs, need to invert to make it strengths. Normally commented out
+#df['Weight'] = 1/df['Weight']
 
 
 G = nx.from_pandas_edgelist(df, source ='From', target = 'To', edge_attr=True, create_using=nx.DiGraph())
@@ -226,7 +231,7 @@ df = nx.to_pandas_edgelist(G)
 nodeTransWeights = nx.get_node_attributes(G,'nodeTransferWeight')
 
 #add the betweenness here also - This is a very slow calculation - be patient. It is in this script so that we only have to do it once. 
-btw = nx.betweenness_centrality(G)
+btw = nx.betweenness_centrality(G, weight = 'Weight')
 
 nodeTransWeights2 = pd.DataFrame(list(nodeTransWeights.items()), columns = ['SMILES','nodeTransferWeights'])
 
@@ -234,7 +239,7 @@ for i, row in nodeTransWeights2.iterrows():
     nodeTransWeights2.at[i, 'Betweenness Centrality'] = btw[row['SMILES']]
 
 
-##Add the degrees in and out ontol the nodes dataframe
+##Add the degrees in and out ontol the nodes dataframe if desired
 #outDeg = pd.DataFrame.from_dict(dict(G.out_degree()),  orient = 'index', columns = ['OutDeg'])
 #outDeg['SMILES'] = outDeg.index
 #
@@ -269,10 +274,14 @@ for i, row in df.iterrows():
 
 
 #write out the QF node file. This is the most important file for future calculations
-os.chdir(r'C:\ResearchWorkingDirectory\gitRepositories')
+os.chdir(r'C:\ResearchWorkingDirectory\gitRepositories\networkAnalysis')
+
 
 #timestr = 'ExampleNT_BTW_Nodes' + time.strftime("%Y%m%d-%H%M%S") +'.xlsx'
-timestr = 'ExampleNT_BTW_Nodes' + '.xlsx'
+
+
+
+timestr = 'ExampleNT_BTW_Nodes'  +'.xlsx'
 
 print (timestr)
 writer = pd.ExcelWriter(timestr)

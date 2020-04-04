@@ -30,9 +30,13 @@ from scipy.stats import levene
 #****************************************************************
 ##Load up another file with other data to add. 
 
-dfQF = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\ExampleNT_BTW_Nodes.xlsx", sheet_name = 'Sheet1')
+#dfQF = pd.read_excel(r"C:\ResearchWorkingDirectory\DataReferenceFiles\FluorPathNodeThroughput_32_Check.xlsx", sheet_name = 'Sheet1')
 
-epiLogP = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\ExampleEpiLogP.xlsx", sheet_name = 'Sheet1')
+dfQF = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\networkAnalysis\ExampleNT_BTW_Nodes.xlsx", sheet_name = 'Sheet1')
+
+epiLogP = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\ExampleEpiLogKow.xlsx", sheet_name = 'Sheet1')
+
+#epiLogP = pd.read_excel(r"C:\ResearchWorkingDirectory\KOWWIN LogP\FluoreneEpiLogKow.xlsx", sheet_name = 'Sheet1')
 
 epiLogP.drop_duplicates(inplace = True)
 epiLogP.reset_index(inplace = True, drop = True)
@@ -147,14 +151,14 @@ for t in toCor:
 
 #Write out two different data frames, one with edgedata, one with node data. 
 
-#########Write out the updated excel file
-#os.chdir(r'C:\ResearchWorkingDirectory\DataReferenceFiles\PaperData\Spearmans')
-##
-#timestr = 'SpearmanFluoreneRaw' + time.strftime("%Y%m%d-%H%M%S") +'.xlsx'
-#print (timestr)
-#writer = pd.ExcelWriter(timestr)
-#spearmanDF.to_excel(writer,'Sheet1')
-#writer.save()
+##########Write out the updated excel file
+os.chdir(r'C:\ResearchWorkingDirectory\gitRepositories\networkAnalysis')
+#
+timestr = 'SpearmanExample_' + time.strftime("%Y%m%d-%H%M%S") +'.xlsx'
+print (timestr)
+writer = pd.ExcelWriter(timestr)
+spearmanDF.to_excel(writer,'Sheet1')
+writer.save()
 
 
 #os.chdir('C:\ResearchWorkingDirectory\DataReferenceFiles\PaperData')

@@ -78,26 +78,26 @@ def FindSubstructures(testMol, benRingMol, smilesList, df):
 
 #read in a list of smiles
     
-dfQF = pd.read_excel(r"C:\ResearchWorkingDirectory\DataReferenceFiles\PaperData\DFqfPhen20190613-224810.xlsx", sheet_name = 'Sheet1')
+dfQF = pd.read_excel(r"C:\ResearchWorkingDirectory\DataReferenceFiles\PhenNodeThroughput_32.xlsx", sheet_name = 'Sheet1')
 
-dfQF.sort_values(by ='Betweeness Centrality', ascending = False, inplace = True)
+dfQF.sort_values(by ='Betweenness Centrality', ascending = False, inplace = True)
 dfQF.reset_index(inplace = True, drop = True)
 
-tempSmiles = dfQF[['SMILES', 'Betweeness Centrality']]  #.head(1000)
+tempSmiles = dfQF[['SMILES', 'Betweenness Centrality']]  #.head(1000)
 smilesList = list(tempSmiles['SMILES'])
 
 
 #The user must define a minimum sub-structure for to start from. Usually one or two benzene rings is used. 
 
 #napthalene as a base structure
-#benRingMol = Chem.MolFromSmiles('C1C2=C(C=CC=C2)C2=C1C=CC=C2')
+benRingMol = Chem.MolFromSmiles('C1=CC=CC=C1')
 
 #benzene as a base structure
-benRingMol = Chem.MolFromSmiles('C1=CC=CC=C1')
+#benRingMol = Chem.MolFromSmiles('c1ccc(cc1)-c1ccccc1')
 
 
 #************************************************************************
-df = pd.DataFrame(columns=['SMILES','nodeTransferWeights110100','Rings','Carbons'])
+df = pd.DataFrame(columns=['SMILES','nodeTransferWeights','Rings','Carbons'])
 for s in smilesList:
     m = rd.Chem.MolFromSmiles(s)
 
@@ -108,18 +108,18 @@ for s in smilesList:
     
     #supposed to only append if it gets the right base substructure
     #something's wrong here
-    ntw = float(dfQF.loc[dfQF['SMILES'] == s, 'nodeTransferWeights110100'])
+    ntw = float(dfQF.loc[dfQF['SMILES'] == s, 'nodeTransferWeights'])
     
     #only include ones that at least match the substrate:
     if currentRings > 0:
-        dfNext = pd.DataFrame(data ={'SMILES': [s], 'nodeTransferWeights110100':[ntw],'Rings':[currentRings], 'Carbons':[numCarbs]})
+        dfNext = pd.DataFrame(data ={'SMILES': [s], 'nodeTransferWeights':[ntw],'Rings':[currentRings], 'Carbons':[numCarbs]})
         df = df.append(dfNext, ignore_index = True)
 #************************************************************************
   
     
 #run these as individual lines. If you need to change the benRingMol you have to run smilesList loop again
     
-testMol = Chem.MolFromSmiles('O=C(O)C=Cc1ccccc1C(=O)O') #,sanitize=False)
+testMol = Chem.MolFromSmiles('O=C(O)Cc1ccc(O)cc1') #,sanitize=False)
 
 output = FindSubstructures(testMol, benRingMol,smilesList,df )
 #Sort the output dataframe by Dice Sim. This usually gives the best match. 
@@ -127,10 +127,55 @@ output = FindSubstructures(testMol, benRingMol,smilesList,df )
 
 
 #run the closest match here to get its throughput value
-dfQF.loc[dfQF['SMILES'] == 'Oc1cccc(c1O)-c1ccccc1C([O-])=O', 'nodeTransferWeights110100']
+dfQF.loc[dfQF['SMILES'] == 'Oc1ccccc1', 'nodeTransferWeights']
+
+from rdkit import Chem
+# 
+#
+oldS = '[O-]C(=O)\C=C/c1ccccc1C([O-])=O'
+newS = Chem.MolToSmiles(Chem.MolFromSmiles(oldS),True) 
+print(newS)
+
+###*******************************************************************
+#get_ipython().magic('reset -sf')
+import os
+from rdkit import Chem
+from rdkit.Chem import Descriptors
+from rdkit.Chem import rdDepictor
+from rdkit.Chem.Draw import rdMolDraw2D
+from rdkit.Chem.Draw import DrawingOptions
+
+import xlsxwriter
+
+DrawingOptions.atomLabelFontSize = 50
+DrawingOptions.dotsPerAngstrom = 100
+DrawingOptions.bondLineWidth = 5.0
+
+#DrawingOptions.atomLabelFontSize = 80
+#DrawingOptions.dotsPerAngstrom = 900
+#DrawingOptions.bondLineWidth = 11.0
+DrawingOptions.padding = 0
+DrawingOptions.dblBondOffset = 0.25
+DrawingOptions.atomLabelFontFace = 'Times-Bold'
+
+DrawingOptions.elemDict= {0: (0.5, 0.5, 0.5), 1: (0.55, 0.55, 0.55), 7: (0, 0, 1), 8: (1, 0, 0), 9: (0.2, 0.8, 0.8), 15: (1, 0.5, 0), 16: (0.8, 0.8, 0), 17: (0, 0.8, 0), 35: (0.5, 0.3, 0.1), 53: (0.63, 0.12, 0.94)}
 
 
+#import os
+#import xlsxwriter
+#os.chdir('C:\ResearchWorkingDirectory\DataReferenceFiles\PaperData')
+#
+#workbook = xlsxwriter.Workbook('compound8.xlsx')
+#worksheet = workbook.add_worksheet("Anthimages")
 
+#worksheet.write('A1', 'logP: ' + str(row['FromLogP']))
+
+
+os.chdir('C:\ResearchWorkingDirectory\TempImages')
+
+m = Chem.MolFromSmiles('O\C(=C\C=C\C(=O)c1ccccc1O)C([O-])=O')
+imageSTR = 'Fluor1.png'
+Chem.Draw.MolToFile(m, imageSTR, size=(700, 700),fitImage=True)
 
 
 

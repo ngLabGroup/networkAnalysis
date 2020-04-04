@@ -23,10 +23,14 @@ from CustomFunctions_PAHteam import FindSourceSink
 from CustomFunctions_PAHteam import getIncomingNodes
 
 #need the logP values from the EpiSuiteLogP script
-LogP = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\ExampleEpiLogP.xlsx", sheet_name = 'Sheet1')
+LogP = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\ExampleEpiLogKow.xlsx", sheet_name = 'Sheet1')
+
+#LogP = pd.read_excel(r"C:\ResearchWorkingDirectory\KOWWIN LogP\AnthEpiLogP.xlsx", sheet_name = 'Sheet1')
 
 #read in the raw DF so that we can build the network
 df = pd.read_excel(r"C:\ResearchWorkingDirectory\gitRepositories\RawExampleData.xlsx", sheet_name = 'Sheet1')
+
+#df = pd.read_excel(r"C:\ResearchWorkingDirectory\DataReferenceFiles\RawFiles\AcenaphtheneFinal.xlsx", sheet_name = 'Sheet1')
 
 df.drop_duplicates(inplace = True)
 df.reset_index(inplace = True, drop = True)
@@ -69,7 +73,7 @@ extraSinks = list(set(extraSinks))
 pathCompounds = list(set(pathCompounds))
 
 #write off the final result
-os.chdir('C:\ResearchWorkingDirectory\gitRepositories')
+os.chdir(r'C:\ResearchWorkingDirectory\gitRepositories\networkAnalysis')
 
 newDF.to_excel('ExamplePathWeight.xlsx', sheet_name='Sheet1', engine='xlsxwriter' )
 
